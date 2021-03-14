@@ -28,15 +28,15 @@ module.exports = function (app) {
       } = req.body;
 
       if (text == undefined) {
-        res.send({ error: 'Required field(s) missing' });
+        return res.send({ error: 'Required field(s) missing' });
       }
 
       if (text.length == 0) {
-        res.send({ error: 'No text to translate' });
+        return res.send({ error: 'No text to translate' });
       }
 
       if (!Translator.locales().includes(locale)) {
-        res.send({ error: 'Invalid value for locale field' });
+        return res.send({ error: 'Invalid value for locale field' });
       }
 
       const translated = translator.translate(text, locale);

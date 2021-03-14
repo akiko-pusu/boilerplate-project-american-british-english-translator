@@ -85,9 +85,8 @@ class Translator {
 
   translateToAmerican(text) {
     let onlyMap = this.britishOnly;
-    let spellingMap = this.inverseObject(this.americanToBritishSpelling);
-    let titleMap = this.inverseObject(this.americanToBritishTitles);
-
+    let spellingMap = this.swapMap(this.americanToBritishSpelling);
+    let titleMap = this.swapMap(this.americanToBritishTitles);
     text = this.convertLanguageOnly(text, onlyMap);
     text = this.convertLanguageOnly(text, spellingMap);
     text = this.convertTitle(text, titleMap);
@@ -97,23 +96,17 @@ class Translator {
     return text;
   }
 
-  // translator.convertLanguageOnly("parking lot", 'american-to-british');
   convertLanguageOnly(text, map) {
     let keys = Object.keys(map);
     for (let i = 0; i < keys.length; i++) {
       let key = keys[i];
       let replaced = map[key];
-      let replacedString = `<span class="highlight">${replaced}</span>`;
-      text = text.replace(key, replacedString);
+      let regEx = new RegExp(`${key}([ |\.])`, "ig");
+
+      let replacedString = `<span class="highlight">${replaced}</span>$1`;
+      text = text.replace(regEx, replacedString);
     }
     return text;
-  }
-
-  // Reverse Map
-  inverseObject(obj) {
-    return Object.keys(obj).reduceRight(function (ret, k) {
-      return k, ret;
-    }, {});
   }
 
   // Handle Time way
@@ -123,7 +116,7 @@ class Translator {
   }
 
   convertTimeToAmerican(text) {
-    let re = /(\d{1,2}).(\d{1,2})/;
+    let re = /(\d{1,2})\.(\d{1,2})/;
     return text.replace(re, '<span class="highlight">$1:$2</span>');
   }
 
@@ -138,6 +131,21 @@ class Translator {
       text = text.replace(regEx, replacedString);
     }
     return text;
+  }
+
+  swapMap(obj) {
+    let retval = []
+    let keys = Object.keys(obj)
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i];
+      let value = obj[key];
+      retval.push([key, value])
+    }
+    let result = {}
+    for (let i = 0; i < retval.length; i++) {
+      result[`${retval[i][1]}`] = retval[i][0];
+    }
+    return result;
   }
 }
 
