@@ -123,7 +123,7 @@ class Translator {
   }
 
   convertTimeToAmerican(text) {
-    let re = /(\d{1,2}).(\d{1,2})/;
+    let re = /(\d{1,2})\.(\d{1,2})/;
     return text.replace(re, '<span class="highlight">$1:$2</span>');
   }
 
