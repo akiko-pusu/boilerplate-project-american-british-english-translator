@@ -24,6 +24,13 @@ class Translator {
     }
   }
 
+  static locales() {
+    return [
+      'american-to-british',
+      'british-to-american'
+    ];
+  }
+
   // Initialize
   constructor() {
     this.americanOnly = americanOnly;
@@ -35,6 +42,11 @@ class Translator {
   // main method
   translate(text, locale) {
     let original = text;
+
+    if (!Translator.locales().includes(locale)) {
+      throw 'Invalid value for locale field';
+    }
+
     text = this.convertLanguageByLocale(text, locale);
 
     if (text == original) {

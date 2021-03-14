@@ -1,6 +1,12 @@
 'use strict';
 
 const Translator = require('../components/translator.js');
+const { body } = require('express-validator');
+
+// for Bulk escape posted data
+const validateBody = [
+  body('*').trim().escape()
+];
 
 module.exports = function (app) {
 
@@ -15,16 +21,28 @@ module.exports = function (app) {
     }
   */
   app.route('/api/translate')
-    .post((req, res) => {
+    .post(validateBody, (req, res) => {
       let {
         locale,
         text
       } = req.body;
 
+      if (text == undefined) {
+        res.send({ error: 'Required field(s) missing' });
+      }
+
+      if (text.length == 0) {
+        res.send({ error: 'No text to translate' });
+      }
+
+      if (!Translator.locales().includes(locale)) {
+        res.send({ error: 'Invalid value for locale field' });
+      }
+
       const translated = translator.translate(text, locale);
 
       res.status(200)
         .type('json')
-        .send({ "translation": translated });
+        .send({ "text": text, "translation": translated });
     });
 };
